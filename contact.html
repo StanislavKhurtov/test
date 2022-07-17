@@ -6,7 +6,7 @@
 	<meta charset="UTF-8">
 	<meta name="format-detection" content="telephone=no">
 	<!-- <style>body{opacity: 0;}</style> -->
-	<link rel="stylesheet" href="css/style.min.css?_v=20220717161909">
+	<link rel="stylesheet" href="css/style.min.css?_v=20220717171810">
 	<link rel="shortcut icon" href="favicon.ico">
 	<!-- <meta name="robots" content="noindex, nofollow"> -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,24 +18,22 @@
 			<section data-fullscreen class="mainpage__contact contact">
 				<a href="index.html#" class="contact__back _icon-arrows"></a>
 				<div class="contact__container">
-					<div class="form">
-						<form id="form" action="#" class="form_-body">
-							<h2 class="contact__title">Get In Touch</h2>
-							<div class="form__item">
-								<label for="formName" class="form__label">Name</label>
-								<input id="formName" data-required autocomplete="off" type="text" name="form[text]" data-error="Ошибка" placeholder="Your Name" class="form__input _req">
-							</div>
-							<div class="form__item">
-								<label for="formEmail" class="form__label">Email</label>
-								<input id="formEmail" autocomplete="off" type="text" name="form[email]" data-error="Ошибка" placeholder="Your Email" class="form__input _req">
-							</div>
-							<div class="form__item">
-								<label for="formMessage" class="form__label">Message</label>
-								<textarea id="formMessage" name="message" class="form__input"></textarea>
-							</div>
-							<button type="submit" class="form__button">Submit</button>
-						</form>
-					</div>
+					<form id="form" action="#" method="post" action="sendmail.php" class="form">
+						<h2 class="contact__title">Get In Touch</h2>
+						<div class="form__item">
+							<label for="formName" class="form__label">Name</label>
+							<input id="formName" data-required autocomplete="off" type="text" name="form[text]" data-error="Ошибка" placeholder="Your Name" class="form__input">
+						</div>
+						<div class="form__item">
+							<label for="formEmail" class="form__label">Email</label>
+							<input id="formEmail" data-required="email" autocomplete="off" type="text" name="form[email]" data-error="Ошибка" placeholder="Your Email" class="form__input">
+						</div>
+						<div class="form__item">
+							<label for="formMessage" class="form__label">Message</label>
+							<textarea id="formMessage" name="message" class="form__input"></textarea>
+						</div>
+						<button type="submit" class="form__button">Submit</button>
+					</form>
 				</div>
 			</section>
 		</main>
@@ -69,7 +67,7 @@
 </div>
  -->
 
-	<script src="js/app.min.js?_v=20220717161909"></script>
+	<script src="js/app.min.js?_v=20220717171810"></script>
 </body>
 
 </html>
