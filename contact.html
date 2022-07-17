@@ -6,7 +6,7 @@
 	<meta charset="UTF-8">
 	<meta name="format-detection" content="telephone=no">
 	<!-- <style>body{opacity: 0;}</style> -->
-	<link rel="stylesheet" href="css/style.min.css?_v=20220716173524">
+	<link rel="stylesheet" href="css/style.min.css?_v=20220717143229">
 	<link rel="shortcut icon" href="favicon.ico">
 	<!-- <meta name="robots" content="noindex, nofollow"> -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,24 +15,24 @@
 <body>
 	<div class="wrapper">
 		<main class="mainpage">
-			<section data-fullscreen class="mainpage__contact contact">
+			<section class="mainpage__contact contact">
 				<a href="index.html#" class="contact__back _icon-arrows"></a>
 				<div data-da=".contact__image-ibg, 768" class="contact__content">
-					<h2 class="contact__title">Get In Touch</h2>
-					<form action="#" class="contact__form form-contact">
-						<div class="form-contact__item">
-							<label for="formName" class="form-contact__label">Name</label>
-							<input id="formName" autocomplete="off" type="text" name="form[text]" data-error="Ошибка" placeholder="Name" class="form-contact__input">
+					<form id="forms" action="#" method="GET" enctype="multipart/form-data" class="contact__form form">
+						<h2 class="contact__title">Get In Touch</h2>
+						<div class="form__item">
+							<label for="formName" class="form__label">Name</label>
+							<input id="formName" data-required="name" autocomplete="off" type="text" name="form[text]" data-error="Ошибка" placeholder="Name" class="form__input">
 						</div>
-						<div class="form-contact__item">
-							<label for="formEmail" class="form-contact__label">Email</label>
-							<input id="formEmail" autocomplete="off" type="text" name="form[email]" data-error="Ошибка" placeholder="Email" class="form-contact__input">
+						<div class="form__item">
+							<label for="formEmail" class="form__label">Email</label>
+							<input id="formEmail" data-required="email" autocomplete="off" type="text" name="form[email]" data-error="Ошибка" placeholder="Email" class="form__input">
 						</div>
-						<div class="form-contact__item">
-							<label for="formMessage" class="form-contact__label">Message</label>
-							<textarea id="formMessage" name="message" class="form-contact__input"></textarea>
+						<div class="form__item">
+							<label for="formMessage" class="form__label">Message</label>
+							<textarea id="formMessage" name="message" class="form__input"></textarea>
 						</div>
-						<button type="submit" class="form-contact__button">Submit</button>
+						<button type="submit" class="form__button">Submit</button>
 					</form>
 				</div>
 				<div class="contact__image-ibg"><picture><source data-srcset="img/Contact/image.webp" type="image/webp"><img data-src="img/Contact/image.jpg" alt="image"></picture></div>
@@ -68,7 +68,7 @@
 </div>
  -->
 
-	<script src="js/app.min.js?_v=20220716173524"></script>
+	<script src="js/app.min.js?_v=20220717143229"></script>
 </body>
 
 </html>
