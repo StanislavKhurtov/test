@@ -727,6 +727,12 @@
             }
         }
         flsModules.popup = new Popup({});
+        var lazyload_min = __webpack_require__(732);
+        new lazyload_min({
+            elements_selector: "[data-src],[data-srcset]",
+            class_loaded: "_lazy-loaded",
+            use_native: true
+        });
         let gotoBlock = (targetBlock, noHeader = false, speed = 500, offsetTop = 0) => {
             const targetBlockElement = document.querySelector(targetBlock);
             if (targetBlockElement) {
@@ -756,181 +762,6 @@
                 FLS(`[gotoBlock]: Юхуу...едем к ${targetBlock}`);
             } else FLS(`[gotoBlock]: Ой ой..Такого блока нет на странице: ${targetBlock}`);
         };
-        function formFieldsInit(options = {
-            viewPass: false
-        }) {
-            const formFields = document.querySelectorAll("input[placeholder],textarea[placeholder]");
-            if (formFields.length) formFields.forEach((formField => {
-                if (!formField.hasAttribute("data-placeholder-nohide")) formField.dataset.placeholder = formField.placeholder;
-            }));
-            document.body.addEventListener("focusin", (function(e) {
-                const targetElement = e.target;
-                if ("INPUT" === targetElement.tagName || "TEXTAREA" === targetElement.tagName) {
-                    if (targetElement.dataset.placeholder) targetElement.placeholder = "";
-                    if (!targetElement.hasAttribute("data-no-focus-classes")) {
-                        targetElement.classList.add("_form-focus");
-                        targetElement.parentElement.classList.add("_form-focus");
-                    }
-                    formValidate.removeError(targetElement);
-                }
-            }));
-            document.body.addEventListener("focusout", (function(e) {
-                const targetElement = e.target;
-                if ("INPUT" === targetElement.tagName || "TEXTAREA" === targetElement.tagName) {
-                    if (targetElement.dataset.placeholder) targetElement.placeholder = targetElement.dataset.placeholder;
-                    if (!targetElement.hasAttribute("data-no-focus-classes")) {
-                        targetElement.classList.remove("_form-focus");
-                        targetElement.parentElement.classList.remove("_form-focus");
-                    }
-                    if (targetElement.hasAttribute("data-validate")) formValidate.validateInput(targetElement);
-                }
-            }));
-            if (options.viewPass) document.addEventListener("click", (function(e) {
-                let targetElement = e.target;
-                if (targetElement.closest('[class*="__viewpass"]')) {
-                    let inputType = targetElement.classList.contains("_viewpass-active") ? "password" : "text";
-                    targetElement.parentElement.querySelector("input").setAttribute("type", inputType);
-                    targetElement.classList.toggle("_viewpass-active");
-                }
-            }));
-        }
-        let formValidate = {
-            getErrors(form) {
-                let error = 0;
-                let formRequiredItems = form.querySelectorAll("*[data-required]");
-                if (formRequiredItems.length) formRequiredItems.forEach((formRequiredItem => {
-                    if ((null !== formRequiredItem.offsetParent || "SELECT" === formRequiredItem.tagName) && !formRequiredItem.disabled) error += this.validateInput(formRequiredItem);
-                }));
-                return error;
-            },
-            validateInput(formRequiredItem) {
-                let error = 0;
-                if ("email" === formRequiredItem.dataset.required) {
-                    formRequiredItem.value = formRequiredItem.value.replace(" ", "");
-                    if (this.emailTest(formRequiredItem)) {
-                        this.addError(formRequiredItem);
-                        error++;
-                    } else this.removeError(formRequiredItem);
-                } else if ("checkbox" === formRequiredItem.type && !formRequiredItem.checked) {
-                    this.addError(formRequiredItem);
-                    error++;
-                } else if (!formRequiredItem.value) {
-                    this.addError(formRequiredItem);
-                    error++;
-                } else this.removeError(formRequiredItem);
-                return error;
-            },
-            addError(formRequiredItem) {
-                formRequiredItem.classList.add("_form-error");
-                formRequiredItem.parentElement.classList.add("_form-error");
-                let inputError = formRequiredItem.parentElement.querySelector(".form__error");
-                if (inputError) formRequiredItem.parentElement.removeChild(inputError);
-                if (formRequiredItem.dataset.error) formRequiredItem.parentElement.insertAdjacentHTML("beforeend", `<div class="form__error">${formRequiredItem.dataset.error}</div>`);
-            },
-            removeError(formRequiredItem) {
-                formRequiredItem.classList.remove("_form-error");
-                formRequiredItem.parentElement.classList.remove("_form-error");
-                if (formRequiredItem.parentElement.querySelector(".form__error")) formRequiredItem.parentElement.removeChild(formRequiredItem.parentElement.querySelector(".form__error"));
-            },
-            formClean(form) {
-                form.reset();
-                setTimeout((() => {
-                    let inputs = form.querySelectorAll("input,textarea");
-                    for (let index = 0; index < inputs.length; index++) {
-                        const el = inputs[index];
-                        el.parentElement.classList.remove("_form-focus");
-                        el.classList.remove("_form-focus");
-                        formValidate.removeError(el);
-                    }
-                    let checkboxes = form.querySelectorAll(".checkbox__input");
-                    if (checkboxes.length > 0) for (let index = 0; index < checkboxes.length; index++) {
-                        const checkbox = checkboxes[index];
-                        checkbox.checked = false;
-                    }
-                    if (flsModules.select) {
-                        let selects = form.querySelectorAll(".select");
-                        if (selects.length) for (let index = 0; index < selects.length; index++) {
-                            const select = selects[index].querySelector("select");
-                            flsModules.select.selectBuild(select);
-                        }
-                    }
-                }), 0);
-            },
-            emailTest(formRequiredItem) {
-                return !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,8})+$/.test(formRequiredItem.value);
-            }
-        };
-        function formSubmit(options = {
-            validate: true
-        }) {
-            const forms = document.forms;
-            if (forms.length) for (const form of forms) {
-                form.addEventListener("submit", (function(e) {
-                    const form = e.target;
-                    formSubmitAction(form, e);
-                }));
-                form.addEventListener("reset", (function(e) {
-                    const form = e.target;
-                    formValidate.formClean(form);
-                }));
-            }
-            async function formSubmitAction(form, e) {
-                const error = !form.hasAttribute("data-no-validate") ? formValidate.getErrors(form) : 0;
-                if (0 === error) {
-                    const ajax = form.hasAttribute("data-ajax");
-                    if (ajax) {
-                        e.preventDefault();
-                        const formAction = form.getAttribute("action") ? form.getAttribute("action").trim() : "#";
-                        const formMethod = form.getAttribute("method") ? form.getAttribute("method").trim() : "GET";
-                        const formData = new FormData(form);
-                        form.classList.add("_sending");
-                        const response = await fetch(formAction, {
-                            method: formMethod,
-                            body: formData
-                        });
-                        if (response.ok) {
-                            await response.json();
-                            form.classList.remove("_sending");
-                            formSent(form);
-                        } else {
-                            alert("Ошибка");
-                            form.classList.remove("_sending");
-                        }
-                    } else if (form.hasAttribute("data-dev")) {
-                        e.preventDefault();
-                        formSent(form);
-                    }
-                } else {
-                    e.preventDefault();
-                    const formError = form.querySelector("._form-error");
-                    if (formError && form.hasAttribute("data-goto-error")) gotoBlock(formError, true, 1e3);
-                }
-            }
-            function formSent(form) {
-                document.dispatchEvent(new CustomEvent("formSent", {
-                    detail: {
-                        form
-                    }
-                }));
-                setTimeout((() => {
-                    if (flsModules.popup) {
-                        const popup = form.dataset.popupMessage;
-                        popup ? flsModules.popup.open(popup) : null;
-                    }
-                }), 0);
-                formValidate.formClean(form);
-                formLogging(`Форма отправлена!`);
-            }
-            function formLogging(message) {
-                FLS(`[Формы]: ${message}`);
-            }
-        }
-        var lazyload_min = __webpack_require__(732);
-        new lazyload_min({
-            elements_selector: "[data-src],[data-srcset]",
-            class_loaded: "_lazy-loaded",
-            use_native: true
-        });
         let addWindowScrollEvent = false;
         function pageNavigation() {
             document.addEventListener("click", pageNavigationAction);
@@ -1165,16 +996,96 @@
         var goTopBtn = document.querySelector(".noselect");
         window.addEventListener("scroll", trackScroll);
         goTopBtn.addEventListener("click", backToTop);
+        "use strict";
+        document.addEventListener("DOMContentLoaded", (function() {
+            const form = document.getElementById("form");
+            form.addEventListener("submit", formSend);
+            async function formSend(e) {
+                e.preventDefault();
+                let error = formValidate(form);
+                let formData = new FormData(form);
+                formData.append("image", formImage.files[0]);
+                if (0 === error) {
+                    form.classList.add("_sending");
+                    let response = await fetch("sendmail.php", {
+                        method: "POST",
+                        body: formData
+                    });
+                    if (response.ok) {
+                        let result = await response.json();
+                        alert(result.message);
+                        formPreview.innerHTML = "";
+                        form.reset();
+                        form.classList.remove("_sending");
+                    } else {
+                        alert("Ошибка");
+                        form.classList.remove("_sending");
+                    }
+                } else alert("Заполните обязательные поля");
+            }
+            function formValidate(form) {
+                let error = 0;
+                let formReq = document.querySelectorAll("._req");
+                for (let index = 0; index < formReq.length; index++) {
+                    const input = formReq[index];
+                    formRemoveError(input);
+                    if (input.classList.contains("_email")) {
+                        if (emailTest(input)) {
+                            formAddError(input);
+                            error++;
+                        }
+                    } else if ("checkbox" === input.getAttribute("type") && false === input.checked) {
+                        formAddError(input);
+                        error++;
+                    } else if ("" === input.value) {
+                        formAddError(input);
+                        error++;
+                    }
+                }
+                return error;
+            }
+            function formAddError(input) {
+                input.parentElement.classList.add("_error");
+                input.classList.add("_error");
+            }
+            function formRemoveError(input) {
+                input.parentElement.classList.remove("_error");
+                input.classList.remove("_error");
+            }
+            function emailTest(input) {
+                return !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,8})+$/.test(input.value);
+            }
+            const formImage = document.getElementById("formImage");
+            const formPreview = document.getElementById("formPreview");
+            formImage.addEventListener("change", (() => {
+                uploadFile(formImage.files[0]);
+            }));
+            function uploadFile(file) {
+                if (![ "image/jpeg", "image/png", "image/gif" ].includes(file.type)) {
+                    alert("Разрешены только изображения.");
+                    formImage.value = "";
+                    return;
+                }
+                if (file.size > 2 * 1024 * 1024) {
+                    alert("Файл должен быть менее 2 МБ.");
+                    return;
+                }
+                var reader = new FileReader;
+                reader.onload = function(e) {
+                    formPreview.innerHTML = `<img src="${e.target.result}" alt="Фото">`;
+                };
+                reader.onerror = function(e) {
+                    alert("Ошибка");
+                };
+                reader.readAsDataURL(file);
+            }
+        }));
         window["FLS"] = true;
         isWebp();
         addTouchClass();
         addLoadedClass();
         menuInit();
         fullVHfix();
-        formFieldsInit({
-            viewPass: false
-        });
-        formSubmit();
         pageNavigation();
         headerScroll();
     })();
